@@ -288,7 +288,9 @@ enum JBSourceMode {
      {
          imageView.transform = finishTransform;
          
-     } completion:^(BOOL finished) {}];
+     } completion:^(BOOL finished) {
+         [self notifyDelegateAnimationFinished];
+     }];
 
     [self notifyDelegate];
 
@@ -319,6 +321,19 @@ enum JBSourceMode {
         [_delegate respondsToSelector:@selector(kenBurns:didFinishAllImages:)])
     {
         [_delegate kenBurns:self didFinishAllImages:[_imagesArray copy]];
+    }
+}
+
+- (void)notifyDelegateAnimationFinished {
+    if([_delegate respondsToSelector:@selector(kenBurns:didFinishAnimatingImage:atIndex:)]) {
+        [_delegate kenBurns:self didFinishAnimatingImage:[self currentImage] atIndex:_currentImageIndex];
+    }
+    
+    if (_currentImageIndex == ([_imagesArray count] - 1) &&
+        !_shouldLoop &&
+        [_delegate respondsToSelector:@selector(kenBurns:didFinishAnimatingAllImages:)])
+    {
+        [_delegate kenBurns:self didFinishAnimatingAllImages:[_imagesArray copy]];
     }
 }
 

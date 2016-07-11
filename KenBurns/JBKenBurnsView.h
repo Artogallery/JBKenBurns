@@ -33,6 +33,9 @@
 - (void)kenBurns:(JBKenBurnsView *)kenBurns didShowImage:(UIImage *)image atIndex:(NSUInteger)index;
 - (void)kenBurns:(JBKenBurnsView *)kenBurns didFinishAllImages:(NSArray *)images;
 
+- (void)kenBurns:(JBKenBurnsView *)kenBurns didFinishAnimatingImage:(UIImage *)image atIndex:(NSInteger)index;
+- (void)kenBurns:(JBKenBurnsView *)kenBurns didFinishAnimatingAllImages:(NSArray *)images;
+
 @end
 
 typedef enum {
