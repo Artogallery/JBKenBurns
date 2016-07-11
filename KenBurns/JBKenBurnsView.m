@@ -289,7 +289,9 @@ enum JBSourceMode {
          imageView.transform = finishTransform;
          
      } completion:^(BOOL finished) {
-         [self notifyDelegateAnimationFinished];
+         if (finished) {
+             [self notifyDelegateAnimationFinished];
+         }
      }];
 
     [self notifyDelegate];
