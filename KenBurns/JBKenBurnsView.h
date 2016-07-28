@@ -36,6 +36,8 @@
 - (void)kenBurns:(JBKenBurnsView *)kenBurns didFinishAnimatingImage:(UIImage *)image atIndex:(NSInteger)index;
 - (void)kenBurns:(JBKenBurnsView *)kenBurns didFinishAnimatingAllImages:(NSArray *)images;
 
+- (void)kenBurns:(JBKenBurnsView *)kenBurns onProcessUpdate: (CGFloat) process;
+
 @end
 
 typedef enum {
@@ -119,5 +121,10 @@ typedef enum {
  @since 0.3
  */
 - (UIImage *)currentImage;
+
+/**
+ Return process of current image slide showing
+ */
+- (CGFloat)currentProcess;
 
 @end

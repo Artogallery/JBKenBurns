@@ -27,6 +27,8 @@
 #define enlargeRatio 1.1
 #define imageBufer 3
 
+CGFloat const UPDATE_TIME_TRIGGER = 0.05;
+
 enum JBSourceMode {
     JBSourceModeImages,
     JBSourceModePaths
@@ -37,6 +39,8 @@ enum JBSourceMode {
 
 @property (nonatomic, strong) NSMutableArray *imagesArray;
 @property (nonatomic, strong) NSTimer *nextImageTimer;
+@property (nonatomic, strong) NSDate *nextImageDate;
+@property (nonatomic, strong) NSTimer *processUpdateTimer;
 
 @property (nonatomic, assign) CGFloat showImageDuration;
 @property (nonatomic, assign) BOOL shouldLoop;
@@ -95,10 +99,11 @@ enum JBSourceMode {
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delay * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         _nextImageTimer = [NSTimer scheduledTimerWithTimeInterval:duration target:self selector:@selector(nextImage) userInfo:nil repeats:YES];
+        _processUpdateTimer = [NSTimer scheduledTimerWithTimeInterval:UPDATE_TIME_TRIGGER target:self selector:@selector(updateProcess) userInfo:nil repeats:YES];
         [_nextImageTimer fire];
+        [[NSRunLoop mainRunLoop] addTimer:_processUpdateTimer forMode:NSRunLoopCommonModes];
     });
 }
-
 
 #pragma mark - Animation control
 
@@ -109,6 +114,11 @@ enum JBSourceMode {
     if (_nextImageTimer && [_nextImageTimer isValid]) {
         [_nextImageTimer invalidate];
         _nextImageTimer = nil;
+    }
+    
+    if (_processUpdateTimer && [_processUpdateTimer isValid]) {
+        [_processUpdateTimer invalidate];
+        _processUpdateTimer = nil;
     }
 }
 
@@ -144,6 +154,7 @@ enum JBSourceMode {
 
 - (void)nextImage
 {
+    _nextImageDate = [NSDate date];
     _currentImageIndex++;
 
     UIImage *image = self.currentImage;
@@ -301,6 +312,17 @@ enum JBSourceMode {
         if (_shouldLoop) { _currentImageIndex = -1; }
         else { [_nextImageTimer invalidate]; }
     }
+}
+
+- (void)updateProcess {
+    if ([_delegate respondsToSelector:@selector(kenBurns:onProcessUpdate:)]) {
+        [_delegate kenBurns:self onProcessUpdate:[self currentProcess]];
+    }
+}
+
+- (CGFloat)currentProcess {
+    NSTimeInterval time = - [_nextImageDate timeIntervalSinceNow];
+    return time / [_nextImageTimer timeInterval];
 }
 
 - (float)getResizeRatioFromImage:(UIImage *)image width:(float)frameWidth height:(float)frameHeight
