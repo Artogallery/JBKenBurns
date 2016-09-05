@@ -5,20 +5,20 @@
 //  Created by Javier Berlana on 9/23/11.
 //  Copyright (c) 2011, Javier Berlana
 //
-//  Permission is hereby granted, free of charge, to any person obtaining a copy of this 
-//  software and associated documentation files (the "Software"), to deal in the Software 
-//  without restriction, including without limitation the rights to use, copy, modify, merge, 
-//  publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons 
+//  Permission is hereby granted, free of charge, to any person obtaining a copy of this
+//  software and associated documentation files (the "Software"), to deal in the Software
+//  without restriction, including without limitation the rights to use, copy, modify, merge,
+//  publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons
 //  to whom the Software is furnished to do so, subject to the following conditions:
 //
-//  The above copyright notice and this permission notice shall be included in all copies 
+//  The above copyright notice and this permission notice shall be included in all copies
 //  or substantial portions of the Software.
 //
-//  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, 
-//  INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR 
-//  PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE 
-//  FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, 
-//  ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS 
+//  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+//  INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+//  PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
+//  FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+//  ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 //  IN THE SOFTWARE.
 //
 
@@ -28,6 +28,7 @@
 #define imageBufer 3
 
 CGFloat const UPDATE_TIME_TRIGGER = 0.05;
+CGFloat const TRANSLATION_TIME = 2.5;
 
 enum JBSourceMode {
     JBSourceModeImages,
@@ -156,7 +157,7 @@ enum JBSourceMode {
 {
     _nextImageDate = [NSDate date];
     _currentImageIndex++;
-
+    
     UIImage *image = self.currentImage;
     UIImageView *imageView = nil;
     
@@ -233,19 +234,19 @@ enum JBSourceMode {
             break;
     }
     
-//    NSLog(@"W: IW:%f OW:%f FW:%f MX:%f",image.size.width, optimusWidth, frameWidth, maxMoveX);
-//    NSLog(@"H: IH:%f OH:%f FH:%f MY:%f\n",image.size.height, optimusHeight, frameHeight, maxMoveY);
+    //    NSLog(@"W: IW:%f OW:%f FW:%f MX:%f",image.size.width, optimusWidth, frameWidth, maxMoveX);
+    //    NSLog(@"H: IH:%f OH:%f FH:%f MY:%f\n",image.size.height, optimusHeight, frameHeight, maxMoveY);
     
     CALayer *picLayer    = [CALayer layer];
     picLayer.contents    = (id)image.CGImage;
-    picLayer.anchorPoint = CGPointMake(0, 0); 
+    picLayer.anchorPoint = CGPointMake(0, 0);
     picLayer.bounds      = CGRectMake(0, 0, optimusWidth, optimusHeight);
     picLayer.position    = CGPointMake(originX, originY);
     
     [imageView.layer addSublayer:picLayer];
     
     CATransition *animation = [CATransition animation];
-    [animation setDuration:1];
+    [animation setDuration:TRANSLATION_TIME];
     [animation setType:kCATransitionFade];
     [[self layer] addAnimation:animation forKey:nil];
     
@@ -304,9 +305,9 @@ enum JBSourceMode {
              [self notifyDelegateAnimationFinished];
          }
      }];
-
+    
     [self notifyDelegate];
-
+    
     // Restart or stop
     if (_currentImageIndex == _imagesArray.count - 1) {
         if (_shouldLoop) { _currentImageIndex = -1; }
